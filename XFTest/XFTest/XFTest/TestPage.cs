@@ -21,7 +21,7 @@ namespace XFTest
 
             var nextButton = new Button
             {
-                Text = "next"
+                Text = "Next"
             };
 
             var backButton = new Button
@@ -85,7 +85,7 @@ namespace XFTest
             {
                 case Position.one:
                     RemoveChildren();
-                    _close = false;
+                    _close = true;
                     break;
                 case Position.two:
                     await _mainStack.ScaleTo(0.9, 80, Easing.CubicOut);
