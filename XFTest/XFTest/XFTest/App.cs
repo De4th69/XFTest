@@ -2,6 +2,7 @@
 using System.Diagnostics;
 
 using Xamarin.Forms;
+using XFtest;
 
 namespace XFTest
 {
@@ -10,7 +11,7 @@ namespace XFTest
         public App()
         {
             // The root page of your application
-            MainPage = new NavigationPage(new TestPage());
+            MainPage = new NavigationPage(new CalendarTest());
         }
     }
 }

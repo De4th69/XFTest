@@ -1,0 +1,279 @@
+﻿
+using System;
+using System.Diagnostics;
+using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
+using Acr.UserDialogs;
+using Xamarin.Forms;
+
+
+namespace XFtest
+{
+    public class DialogTest : TabbedPage {
+
+        public DialogTest()
+        {
+            Title = "Dialog Test";
+        }
+
+        protected override void OnAppearing()
+        {
+            this.AddPage(
+                "Standard Dialogs",
+                Btn("Alert", this.Alert),
+                Btn("ActionSheet", this.ActionSheet),
+                Btn("ActionSheet (async)", this.ActionSheetAsync),
+                Btn("Confirm", this.Confirm),
+                Btn("Login", this.Login),
+                Btn("Prompt", this.Prompt),
+                Btn("Prompt /w Text/No Cancel", this.PromptWithTextAndNoCancel),
+                Btn("Error", () => UserDialogs.Instance.ShowError("ERROR!")),
+                Btn("Success", () => UserDialogs.Instance.ShowSuccess("ERROR!"))
+            );
+
+            this.AddPage(
+                "Progress",
+                Btn("Manual Loading", this.ManualLoading),
+                Btn("Progress", this.Progress),
+                Btn("Progress (No Cancel)", this.ProgressNoCancel),
+                Btn("Loading (Black - Default)", () => this.Loading(MaskType.Black)),
+                Btn("Loading (Clear)", () => this.Loading(MaskType.Clear)),
+                Btn("Loading (Gradient iOS)", () => this.Loading(MaskType.Gradient)),
+                Btn("Loading (None)", () => this.Loading(MaskType.Black)),
+                Btn("Loading (No Cancel)", this.LoadingNoCancel)
+            );
+
+            this.AddPage(
+                "Toasts",
+                Btn("Success", () => Toast(ToastEvent.Success)),
+                Btn("Info", () => Toast(ToastEvent.Info)),
+                Btn("Warning", () => Toast(ToastEvent.Warn)),
+                Btn("Error", () => Toast(ToastEvent.Error))
+            );
+
+            this.AddPage(
+                "Settings/Themes",
+                Btn("Change Default Settings", () =>
+                {
+                    // CANCEL
+                    ActionSheetConfig.DefaultCancelText = ConfirmConfig.DefaultCancelText = LoginConfig.DefaultCancelText = PromptConfig.DefaultCancelText = ProgressDialogConfig.DefaultCancelText = "NO WAY";
+
+                    // OK
+                    AlertConfig.DefaultOkText = ConfirmConfig.DefaultOkText = LoginConfig.DefaultOkText = PromptConfig.DefaultOkText = "Sure";
+
+                    // CUSTOM
+                    ActionSheetConfig.DefaultDestructiveText = "BOOM!";
+                    ConfirmConfig.DefaultYes = "SIGN LIFE AWAY";
+                    ConfirmConfig.DefaultNo = "NO WAY";
+                    LoginConfig.DefaultTitle = "HIGH SECURITY";
+                    LoginConfig.DefaultLoginPlaceholder = "WHO ARE YOU?";
+                    LoginConfig.DefaultPasswordPlaceholder = "SUPER SECRET PASSWORD";
+                    ProgressDialogConfig.DefaultTitle = "WAIT A MINUTE";
+
+                    // TOAST
+                    ToastConfig.DefaultDuration = TimeSpan.FromSeconds(5);
+                    ToastConfig.InfoBackgroundColor = System.Drawing.Color.Aqua;
+                    ToastConfig.SuccessBackgroundColor = System.Drawing.Color.BurlyWood;
+                    ToastConfig.WarnBackgroundColor = System.Drawing.Color.BlueViolet;
+                    ToastConfig.ErrorBackgroundColor = System.Drawing.Color.DeepPink;
+
+                    UserDialogs.Instance.Alert("Default Settings Updated - Now run samples");
+                }),
+                Btn("Reset Default Settings", () =>
+                {
+                    // CANCEL
+                    ActionSheetConfig.DefaultCancelText = ConfirmConfig.DefaultCancelText = LoginConfig.DefaultCancelText = PromptConfig.DefaultCancelText = ProgressDialogConfig.DefaultCancelText = "Cancel";
+
+                    // OK
+                    AlertConfig.DefaultOkText = ConfirmConfig.DefaultOkText = LoginConfig.DefaultOkText = PromptConfig.DefaultOkText = "Ok";
+
+                    // CUSTOM
+                    ActionSheetConfig.DefaultDestructiveText = "Remove";
+                    ConfirmConfig.DefaultYes = "Yes";
+                    ConfirmConfig.DefaultNo = "No";
+                    LoginConfig.DefaultTitle = "Login";
+                    LoginConfig.DefaultLoginPlaceholder = "User Name";
+                    LoginConfig.DefaultPasswordPlaceholder = "Password";
+                    ProgressDialogConfig.DefaultTitle = "Loading";
+                    ToastConfig.DefaultDuration = TimeSpan.FromSeconds(3);
+
+                    UserDialogs.Instance.Alert("Default Settings Restored");
+
+                    // TODO: toast defaults
+                })
+            );
+        }
+
+        void AddPage(string title, params View[] views) {
+            var content = new StackLayout();
+            foreach (var view in views)
+                content.Children.Add(view);
+
+            this.Children.Add(new ContentPage {
+                Content = content,
+                Title = title
+            });
+        }
+
+        static Button Btn(string text, Action action) {
+            return new Button {
+                Text = text,
+                Command = new Command(action)
+            };
+        }
+
+
+        void Result(string msg) {
+            UserDialogs.Instance.Alert(msg);
+        }
+
+
+        async void Alert() {
+            await UserDialogs.Instance.AlertAsync("Test alert", "Alert Title");
+            //this.lblResult.Text = "Returned from alert!";
+        }
+
+
+        void ActionSheet() {
+			var cfg = new ActionSheetConfig()
+				.SetTitle("Test Title");
+
+            for (var i = 0; i < 5; i++) {
+                var display = (i + 1);
+                cfg.Add(
+					"Option " + display,
+					() => this.Result(string.Format("Option {0} Selected", display))
+				);
+            }
+			cfg.SetDestructive(action: () => this.Result("Destructive BOOM Selected"));
+			cfg.SetCancel(action: () => this.Result("Cancel Selected"));
+
+            UserDialogs.Instance.ActionSheet(cfg);
+        }
+
+
+        public async void ActionSheetAsync() {
+            var result = await UserDialogs.Instance.ActionSheetAsync("Test Title", "Cancel", "Destroy", "Button1", "Button2", "Button3");
+            this.Result(result);
+        }
+
+
+        async void Confirm() {
+            var r = await UserDialogs.Instance.ConfirmAsync("Pick a choice", "Pick Title");
+            var text = (r ? "Yes" : "No");
+            this.Result(string.Format("Confirmation Choice: {0}", text));
+        }
+
+
+        async void Login() {
+			var r = await UserDialogs.Instance.LoginAsync(new LoginConfig {
+				Message = "DANGER"
+			});
+            var status = r.Ok ? "Success" : "Cancelled";
+            this.Result(string.Format("Login {0} - User Name: {1} - Password: {2}", status,r.LoginText,r.Password));
+        }
+
+
+		void Prompt() {
+			UserDialogs.Instance.ActionSheet(new ActionSheetConfig()
+				.SetTitle("Choose Type")
+				.Add("Default", () => this.PromptCommand(InputType.Default))
+				.Add("E-Mail", () => this.PromptCommand(InputType.Email))
+                .Add("Name", () => this.PromptCommand(InputType.Name))
+				.Add("Number", () => this.PromptCommand(InputType.Number))
+				.Add("Password", () => this.PromptCommand(InputType.Password))
+                .Add("Numeric Password (PIN)", () => this.PromptCommand(InputType.NumericPassword))
+                .Add("Phone", () => this.PromptCommand(InputType.Phone))
+                .Add("Url", () => this.PromptCommand(InputType.Url))
+			);
+		}
+
+
+		async void PromptWithTextAndNoCancel() {
+			var result = await UserDialogs.Instance.PromptAsync(new PromptConfig {
+				Title = "PromptWithTextAndNoCancel",
+				Text = "Existing Text",
+				IsCancellable = false
+			});
+			this.Result(string.Format("Result - {0}", result.Text));
+		}
+
+
+		async void PromptCommand(InputType inputType) {
+			var msg = string.Format("Enter a {0} value", inputType.ToString().ToUpper());
+			var r = await UserDialogs.Instance.PromptAsync(msg, inputType: inputType);
+            this.Result(r.Ok
+                ? "OK " + r.Text
+                : "Prompt Cancelled");
+        }
+
+
+        async void Progress() {
+            var cancelled = false;
+
+            using (var dlg = UserDialogs.Instance.Progress("Test Progress")) {
+                dlg.SetCancel(() => cancelled = true);
+                while (!cancelled && dlg.PercentComplete < 100) {
+                    await Task.Delay(TimeSpan.FromMilliseconds(500));
+                    dlg.PercentComplete += 2;
+                }
+            }
+            this.Result(cancelled ? "Progress Cancelled" : "Progress Complete");
+        }
+
+
+        async void ProgressNoCancel() {
+            using (var dlg = UserDialogs.Instance.Progress("Progress (No Cancel)")) {
+                while (dlg.PercentComplete < 100) {
+                    await Task.Delay(TimeSpan.FromSeconds(1));
+                    dlg.PercentComplete += 20;
+                }
+            }
+        }
+
+
+        async void Loading(MaskType maskType) {
+            var cancelSrc = new CancellationTokenSource();
+
+			using (var dlg = UserDialogs.Instance.Loading("Loading", maskType: maskType)) {
+                dlg.SetCancel(cancelSrc.Cancel);
+
+                try {
+                    await Task.Delay(TimeSpan.FromSeconds(5), cancelSrc.Token);
+                }
+                catch { }
+            }
+            this.Result(cancelSrc.IsCancellationRequested ? "Loading Cancelled" : "Loading Complete");
+        }
+
+
+        async void LoadingNoCancel() {
+            using (UserDialogs.Instance.Loading("Loading (No Cancel)"))
+                await Task.Delay(TimeSpan.FromSeconds(3));
+        }
+
+
+		void Toast(ToastEvent @event) {
+		    try
+		    {
+		        UserDialogs.Instance.Toast(new ToastConfig(@event, @event.ToString(), "Testing toast functionality....fun!")
+		        {
+		            Duration = TimeSpan.FromSeconds(3),
+		            Action = () => this.Result("Toast Pressed")
+		        });
+		    }
+		    catch (Exception ex)
+		    {
+		        Debug.WriteLine(ex.Message + " : " + ex.StackTrace);
+		    }
+		}
+
+
+		async void ManualLoading() {
+			UserDialogs.Instance.ShowLoading("Manual Loading");
+			await Task.Delay(3000);
+			UserDialogs.Instance.HideLoading();
+		}
+    }
+}

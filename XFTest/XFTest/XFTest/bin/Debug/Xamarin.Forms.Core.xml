@@ -1864,7 +1864,7 @@ Debug.WriteLine (label.Text); //prints "John Doe".
             <param name="callback">The synchronization callback.</param>
             <summary>Starts synchronization on the <paramref name="collection" /> by using <paramref name="callback" /> and <paramref name="context" />.</summary>
             <remarks>
-                <para>Application developers implement <paramref name="callback" /> and pass it to the <see cref="M:Xamarin.Forms.BindingBase.EnableCollectionSynchronization" /> method to enable correct multithreaded access to <paramref name="collection" />. After synchronization is enabled, the Xamarin.Forms framework passes an access method, <paramref name="context" />, and a <see langword="bool" /> that indicates whether write access is needed, to the application developer's implementation of <see cref="M:Xamarin.Forms.CollectionSynchronizationCallback" /> each time that the framework needs to modify the collection in a multithreaded environment. The application developer's implementation should decide, based on the <paramref name="context" /> object (which may be merely a locking object or the object on which the collection lives) and the value of the <paramref name="writeAccess" /><see langword="bool" /> parameter, whether or not to <c>lock</c> while calling <paramref name="accessMethod" />.</para>
+                <para>Application developers implement <paramref name="callback" /> and pass it to the <see cref="M:Xamarin.Forms.BindingBase.EnableCollectionSynchronization" /> method to enable correct multithreaded access to <paramref name="collection" />. After synchronization is enabled, the Xamarin.Forms framework passes an access method, <paramref name="context" />, and a <see langword="bool" /> that indicates whether write access is needed, to the application developer's implementation of <see cref="T:Xamarin.Forms.CollectionSynchronizationCallback" /> each time that the framework needs to modify the collection in a multithreaded environment. The application developer's implementation should decide, based on the <paramref name="context" /> object (which may be merely a locking object or the object on which the collection lives) and the value of the <paramref name="writeAccess" /><see langword="bool" /> parameter, whether or not to <c>lock</c> while calling <paramref name="accessMethod" />.</para>
                 <para>Because Xamarin.Forms maintains a weak reference to <paramref name="collection" />, application developers do not need to call <see cref="M:Xamarin.Forms.BindingBase.DisableCollectionSynchronization" /> to aid in garbage collection.</para>
             </remarks>
         </member>
@@ -7493,7 +7493,7 @@ namespace FormsGallery
         </member>
         <member name="P:Xamarin.Forms.ListView.GroupShortNameBinding">
             <summary>Gets or sets a binding for the name to display in grouped jump lists.</summary>
-            <value>The <see cref="T:Xamarin.Forms.BindingBase" /> instance to apply to grouped lists, or <see cref="null" />.</value>
+            <value>The <see cref="T:Xamarin.Forms.BindingBase" /> instance to apply to grouped lists, or <see langword="null" />.</value>
             <remarks>
                 <para>
             When grouping items in a <see cref="T:Xamarin.Forms.ListView" />, it is often useful to have jump lists to jump to specific
@@ -7576,9 +7576,8 @@ ListView CreateListView()
                 <see langword="true" /> if this <see cref="T:Xamarin.Forms.ListView" /> control has uneven rows. Otherwise, <see langword="false" /></value>
             <remarks>
                 <para>
-						When the <see cref="P:Xamarin.Forms.ListView.HasUnevenRows" /> property is <see langword="true" />, the <see cref="P:Xamarin.Forms.ListView.RowHeight" /> property is ignored for each child <see cref="T:Xamarin.Forms.Cell" /> element that has a <see cref="P:Xamarin.Forms.Cell.Height" /> value that is greater than 0, in which case that <see cref="T:Xamarin.Forms.Cell" /> element's <see cref="P:Xamarin.Forms.Cell.Height" /> value is used, instead. If a child element's <see cref="P:Xamarin.Forms.Cell.Height" /> property is equal to 0, then the <see cref="P:Xamarin.Forms.ListView.RowHeight" /> value is used for that element.
-					</para>
-                <para>Setting this property to <see langword="true" /> does not enable automatic sizing of cells. iOS as a platform must have a size specified ahead of time and due to this restriction you must set <see cref="P:Xamarin.Forms.Cell.Height" />.</para>
+When the <see cref="P:Xamarin.Forms.ListView.HasUnevenRows" /> property is <see langword="true" />, the <see cref="P:Xamarin.Forms.ListView.RowHeight" /> property is ignored for each child <see cref="T:Xamarin.Forms.Cell" /> element that has a <see cref="P:Xamarin.Forms.Cell.Height" /> value that is greater than 0, in which case that <see cref="T:Xamarin.Forms.Cell" /> element's <see cref="P:Xamarin.Forms.Cell.Height" /> value is used, instead. If a child element's <see cref="P:Xamarin.Forms.Cell.Height" /> property is equal to 0, then the <see cref="P:Xamarin.Forms.ListView.RowHeight" /> value is used for that element.
+</para>
             </remarks>
         </member>
         <member name="F:Xamarin.Forms.ListView.HasUnevenRowsProperty">
@@ -8369,12 +8368,6 @@ Children = {
                         <description>Value</description>
                     </listheader>
                     <item>
-                        <term>Property</term>
-                        <description>
-                            <para>The name of the property whose value to compare against <c>Value</c>.</para>
-                        </description>
-                    </item>
-                    <item>
                         <term>Conditions</term>
                         <description>
                             <para>A list of <c>PropertyCondition</c> and/or <c>BindingCondition</c> markup instances that specify the conditions that all must be met before all of the setters that are listed in <c>Setters</c> are applied.</para>
@@ -8400,7 +8393,7 @@ Children = {
             <remarks>To be added.</remarks>
         </member>
         <member name="P:Xamarin.Forms.MultiTrigger.Setters">
-            <summary>Gets the list of <see cref="T:Xamarin.Forms.Setter" /> objects that will be applied when the list of conditions in the <see cref="P:Xamarin.Forms.MultiTrigger.Condtions" /> property are all met.</summary>
+            <summary>Gets the list of <see cref="T:Xamarin.Forms.Setter" /> objects that will be applied when the list of conditions in the <see cref="P:Xamarin.Forms.MultiTrigger.Conditions" /> property are all met.</summary>
             <value>To be added.</value>
             <remarks>To be added.</remarks>
         </member>
@@ -8559,7 +8552,7 @@ Children = {
             <remarks>To be added.</remarks>
         </member>
         <member name="M:Xamarin.Forms.NavigationPage.OnBackButtonPressed">
-            <summary>Event that is raised when the back button is pressed.</summary>
+            <summary>Event that is raised when the hardware back button is pressed. This event is not raised on iOS.</summary>
             <returns>To be added.</returns>
             <remarks>To be added.</remarks>
         </member>
@@ -8730,19 +8723,11 @@ public class MyPage : NavigationPage
                     <see cref="T:Xamarin.Forms.OpenGLView" />s are easiest to program using Shared Projects, in which case the reference to OpenTK is straightforward. The following example shows a simple OpenGL app with a render loop:</para>
                 <example>
                     <code lang="C#"><![CDATA[
-using OpenTK.Graphics.ES20;
 using Xamarin.Forms;
+using OpenTK.Graphics.ES30;
 
-namespace GLDemo
+namespace opengl
 {
-    public class App
-    {
-        public static Page GetMainPage ()
-        {	
-            return new OpenGLPage ();
-        }
-    }
-
     public class OpenGLPage : ContentPage
     {
         float red, green, blue;
@@ -8782,11 +8767,12 @@ namespace GLDemo
                 Padding = new Size (20, 20),
                 Children = {view, toggle, button}
             };
-      
+
             Content = stack;
         }
     }
 }
+
           ]]></code>
                 </example>
                 <para>
@@ -9012,10 +8998,10 @@ namespace MyFirstFormsApp.WinPhone
             <remarks>To be added.</remarks>
         </member>
         <member name="M:Xamarin.Forms.Page.DisplayActionSheet(System.String,System.String,System.String,System.String[])">
-            <param name="title">Title of the displayed action sheet.</param>
-            <param name="cancel">Text to be displayed in the 'Cancel' button.</param>
-            <param name="destruction">Text to be displayed in the 'Destruct' button.</param>
-            <param name="buttons">Text labels for additional buttons.</param>
+            <param name="title">Title of the displayed action sheet. Must not be <see langword="null" />.</param>
+            <param name="cancel">Text to be displayed in the 'Cancel' button. Can be <see langword="null" /> to hide the cancel action.</param>
+            <param name="destruction">Text to be displayed in the 'Destruct' button.  Can be <see langword="null" /> to hide the destructive option.</param>
+            <param name="buttons">Text labels for additional buttons. Must not be <see langword="null" />.</param>
             <summary>Displays a native platform action sheet, allowing the application user to choose from several buttons.</summary>
             <returns>An awaitable Task that displays an action sheet and returns the Text of the button pressed by the user.</returns>
             <remarks>To be added.</remarks>
@@ -13306,7 +13292,7 @@ var beeroclock = new TimePicker () { Time = new TimeSpan (17,0,0) };
         <member name="P:Xamarin.Forms.VisualElement.InputTransparent">
             <summary>Gets or sets a value indicating whether this element should be involved in the user interaction cycle. This is a bindable property.</summary>
             <value>
-                <see langword="true" /> if the element should be able to receive input; <see langword="false" /> if element should not receive input and should pass inputs to the element below. Default is true.</value>
+                <see langword="true" /> if the element should be able to receive input; <see langword="false" /> if element should not receive input and should pass inputs to the element below. Default is <see langword="false" />.</value>
             <remarks>Setting InputTransparent is not the same as setting IsEnabled to false. Setting InputTransparent only disables inputs and instead causes them to be passed to the VisualElement below the element. Usually this is the parent of the element.</remarks>
             <altmember cref="P:Xamarin.Forms.VisualElement.IsEnabled" />
         </member>
